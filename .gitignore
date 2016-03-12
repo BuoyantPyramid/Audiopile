@@ -45,3 +45,6 @@ dist/
 # Ignore config file
 config.js
 
+# Ignore debug log
+npm-debug.log
+

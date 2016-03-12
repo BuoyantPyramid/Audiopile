@@ -30,6 +30,7 @@
     "q": "^1.4.1",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
+    "redux": "^3.3.1",
     "webpack": "^1.12.13"
   },
   "devDependencies": {
@@ -38,6 +39,8 @@
     "eslint-config-hackreactor": "git://github.com/hackreactor-labs/eslint-config-hackreactor",
     "eslint-plugin-react": "^4.2.1",
     "mocha": "^2.4.5",
+    "redux-devtools": "^3.1.1",
+    "redux-devtools-dock-monitor": "^1.1.0",
     "sinon": "^1.17.3"
   }
 }
