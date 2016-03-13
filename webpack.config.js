@@ -7,7 +7,7 @@ var ClosureCompilerPlugin = require('webpack-closure-compiler');
 
 module.exports = {
   devtool: 'eval-source-map',
-  context: path.join(__dirname, 'app'),
+  context: path.join(__dirname, '/client'),
   entry: './main.js',
   output: {
     path: path.join(__dirname, '/dist/'),
@@ -16,7 +16,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'app/index.tpl.html',
+      template: './index.tpl.html',
       inject: 'body',
       filename: 'index.html'
     }),
