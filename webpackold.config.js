@@ -3,39 +3,38 @@
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ClosureCompilerPlugin = require('webpack-closure-compiler');
 
 module.exports = {
   devtool: 'eval-source-map',
-  entry: [
-    'webpack-hot-middleware/client?reload=true',
-    path.join(__dirname, 'client/main.js')
-  ],
+  context: path.join(__dirname, '/client'),
+  entry: './main.js',
   output: {
     path: path.join(__dirname, '/dist/'),
-    filename: '[name].js',
+    filename: 'dist',
     publicPath: '/'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'client/index.tpl.html',
+      template: './index.tpl.html',
       inject: 'body',
       filename: 'index.html'
     }),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development')
-    })
+    new ClosureCompilerPlugin({
+      compiler: {
+        language_in: 'ECMASCRIPT6',
+        language_out: 'ECMASCRIPT5',
+        compilation_level: 'ADVANCED'
+      },
+      concurrency: 3,
+    }),
+    new webpack.optimize.OccurenceOrderPlugin()
   ],
   module: {
     loaders: [{
       test: /\.js?$/,
       exclude: /node_modules/,
-      loader: 'babel',
-      query: {
-        "presets": ["react", "es2015", "stage-0", "react-hmre"]
-      }
+      loader: 'babel'
     }, {
       test: /\.json?$/,
       loader: 'json'

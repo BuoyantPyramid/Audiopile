@@ -9,15 +9,17 @@ const initialState = {
 };
 
 // export a switch function
-export default function authed(state = initialState, action) {
+const auth = function authed(state = initialState, action) {
   switch(action.type) {
   case types.UPDATE_USER:
-      return Object.assign({}, state, {
-          email: action.email,
-          displayName: action.display_name,
-          avatar: action.avatar
-      });
+    return Object.assign({}, state, {
+      email: action.email,
+      displayName: action.display_name,
+      avatar: action.avatar
+    });
   default:
-      return state;
+    return state;
   }
-}
+};
+
+export default auth;

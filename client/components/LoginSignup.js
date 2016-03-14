@@ -6,13 +6,13 @@ class Login extends React.Component {
     return (
       <div>
         <h3>Sign in or create an account</h3>
-        <input ref={node => {this.input = node;}} />
+        <input ref={ node => {this.input = node;} } />
         <button onClick={ () => {
           store.dispatch({
             type: 'UPDATE_USER',
             email: this.input.value,
           });
-        }}>
+        } }>
         Login
         </button>
       </div>
