@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { browserHistory, Router, Route, Link } from 'react-router';
 
 class Login extends React.Component {
@@ -19,3 +19,5 @@ class Login extends React.Component {
     );
   }
 }
+
+export default Login;
