@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { Router, Route, browserHistory } from 'react-router';
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
+import { syncHistoryWithStore } from 'react-router-redux';
 
 import authReducer from './reducers/auth';
 import Login from './components/LoginSignup';
@@ -13,12 +13,6 @@ import App from './containers/App';
 import store from './store/configureStore';
 
 // Add the reducer to your store on the `routing` key
-// const store = createStore(
-//   combineReducers(
-//     Object.assign({}, authReducer,
-//     {routing: routerReducer})
-//   ), 
-// );
 
 // Create an enhanced history that syncs navigation events with the store
 const history = syncHistoryWithStore(browserHistory, store);
