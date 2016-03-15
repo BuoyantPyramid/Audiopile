@@ -21,7 +21,7 @@ class App extends Component {
     }
 
     return (
-      <p style={{ backgroundColor: '#e99', padding: 10 }}>
+      <p>
         <b>{errorMessage}</b>
         {' '}
         (<a href="#"
