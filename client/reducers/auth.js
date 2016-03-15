@@ -1,6 +1,5 @@
 // user login and signup reducer
-
-import * as types from '../constants/actionTypes';
+import * as ActionTypes from '../actions'
 
 const initialState = {
   email: null,
@@ -11,7 +10,7 @@ const initialState = {
 // export a switch function
 const auth = function authed(state = initialState, action) {
   switch(action.type) {
-  case types.UPDATE_USER:
+  case ActionTypes.UPDATE_USER:
     return Object.assign({}, state, {
       email: action.email,
       displayName: action.display_name,
