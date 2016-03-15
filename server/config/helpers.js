@@ -3,7 +3,7 @@ var jwt = require('jwt-simple');
 var errorLogger = function (error, req, res, next) {
   // log the error then send it to the next middleware in
   console.error(error.stack);
-  next(error);
+  next(error); 
 };
 
 var errorHandler = function (error, req, res, next) {
