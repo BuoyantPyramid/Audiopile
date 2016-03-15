@@ -24,6 +24,7 @@
   "homepage": "https://github.com/BuoyantPyramid/buoyantpyramid#readme",
   "dependencies": {
     "angular": "^1.5.0",
+    "angular-route": "^1.5.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
@@ -33,7 +34,7 @@
     "pg": "^4.5.1",
     "q": "^1.4.1",
     "rimraf": "^2.5.2",
-    "sequelize": "^3.19.3",
+    "sequelize": "^3.19.3"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -41,6 +42,6 @@
     "eslint-config-hackreactor": "git://github.com/hackreactor-labs/eslint-config-hackreactor",
     "eslint-plugin-react": "^4.2.1",
     "mocha": "^2.4.5",
-    "sinon": "^1.17.3",
+    "sinon": "^1.17.3"
   }
 }
