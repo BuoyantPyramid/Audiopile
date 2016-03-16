@@ -11,9 +11,9 @@ var KarmaServer = require('karma').Server;
 
 // the paths to our app files
 var paths = {
-  scripts: ['client/**/*.js'],
-  html: ['client/**/*.html', 'client/index.html'],
-  styles: ['client/styles/*.scss'],
+  scripts: ['client/app/**/*.js'],
+  html: ['client/app/**/*.html', 'client/index.html'],
+  styles: ['client/app/styles/*.scss'],
   test: ['tests/**/*.js']
 };
 
@@ -22,7 +22,7 @@ gulp.task('sass', function () {
   return gulp.src(paths.styles)
   .pipe(sass({outputStyle: 'compressed', sourceComments: 'map'}, {errLogToConsole: true}))
   .pipe(prefix('last 2 versions', '> 1%', 'ie 8', 'Android 2', 'Firefox ESR'))
-  .pipe(gulp.dest('client/styles'))
+  .pipe(gulp.dest('dist'))
   .pipe(reload({stream: true}));
 });
 
@@ -41,9 +41,14 @@ gulp.task('karma', function (done) {
 });
 
 // Minify the things
-gulp.task('compile', function() {
-  return gulp.src('client/*.js')
-    .pipe(closureCompiler('build.js'))
+gulp.task('build', function() {
+  return gulp.src(paths.scripts)
+    .pipe(closureCompiler({
+      fileName: 'build.js',
+      compilerFlages: {
+        closure_entry_point: 'app.js'
+      }
+    }))
     .pipe(gulp.dest('dist'));
 });
 

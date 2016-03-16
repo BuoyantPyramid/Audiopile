@@ -12,20 +12,16 @@ angular.module('jam', [
 .config(function ($routeProvider, $httpProvider) {
   $routeProvider
     .when('/login', {
-      templateUrl: 'auth/login.html',
-      controller: 'AuthController'
-    })
-    .when('/signup', {
-      templateUrl: 'auth/signup.html',
+      templateUrl: 'app/auth/login.html',
       controller: 'AuthController'
     })
     .when('/songs', {
-      templateUrl: 'songs/songs.html',
+      templateUrl: 'app/songs/songs.html',
       controller: 'SongsController',
       authenticate: true
     })
     .when('/profile', {
-      templateUrl: 'profile/profile.html',
+      templateUrl: 'app/profile/profile.html',
       controller: 'ProfileController',
       authenticate: true
     })
