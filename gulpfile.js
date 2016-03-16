@@ -5,15 +5,18 @@ var sync = require('browser-sync');
 var reload = sync.reload;
 var nodemon = require('gulp-nodemon');
 var closureCompiler = require('gulp-closure-compiler');
+var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
+var concat = require('gulp-concat');
+var rename = require('gulp-rename');
 var prefix = require('gulp-autoprefixer');
 var KarmaServer = require('karma').Server;
 
 // the paths to our app files
 var paths = {
-  scripts: ['client/**/*.js'],
-  html: ['client/**/*.html', 'client/index.html'],
-  styles: ['client/styles/*.scss'],
+  scripts: ['client/app/**/*.js'],
+  html: ['client/app/**/*.html', 'client/index.html'],
+  styles: ['client/app/styles/*.scss'],
   test: ['tests/**/*.js']
 };
 
@@ -22,7 +25,7 @@ gulp.task('sass', function () {
   return gulp.src(paths.styles)
   .pipe(sass({outputStyle: 'compressed', sourceComments: 'map'}, {errLogToConsole: true}))
   .pipe(prefix('last 2 versions', '> 1%', 'ie 8', 'Android 2', 'Firefox ESR'))
-  .pipe(gulp.dest('client/styles'))
+  .pipe(gulp.dest('dist'))
   .pipe(reload({stream: true}));
 });
 
@@ -41,10 +44,13 @@ gulp.task('karma', function (done) {
 });
 
 // Minify the things
-gulp.task('compile', function() {
-  return gulp.src('client/*.js')
-    .pipe(closureCompiler('build.js'))
-    .pipe(gulp.dest('dist'));
+gulp.task('build', function() {
+  return gulp.src(paths.scripts)
+    .pipe(concat('main.js'))   // Combine into 1 file
+    .pipe(gulp.dest('client/dist'))            // Write non-minified to disk
+    .pipe(uglify())                     // Minify
+    .pipe(rename({extname: '.min.js'})) // Rename to ng-quick-date.min.js
+    .pipe(gulp.dest('client/dist'));            // Write minified to disk
 });
 
 gulp.task('nodemon', function (cb) {
