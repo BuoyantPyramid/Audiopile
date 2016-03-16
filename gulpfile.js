@@ -5,7 +5,10 @@ var sync = require('browser-sync');
 var reload = sync.reload;
 var nodemon = require('gulp-nodemon');
 var closureCompiler = require('gulp-closure-compiler');
+var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
+var concat = require('gulp-concat');
+var rename = require('gulp-rename');
 var prefix = require('gulp-autoprefixer');
 var KarmaServer = require('karma').Server;
 
@@ -43,13 +46,11 @@ gulp.task('karma', function (done) {
 // Minify the things
 gulp.task('build', function() {
   return gulp.src(paths.scripts)
-    .pipe(closureCompiler({
-      fileName: 'build.js',
-      compilerFlages: {
-        closure_entry_point: 'app.js'
-      }
-    }))
-    .pipe(gulp.dest('dist'));
+    .pipe(concat('main.js'))   // Combine into 1 file
+    .pipe(gulp.dest('client/dist'))            // Write non-minified to disk
+    .pipe(uglify())                     // Minify
+    .pipe(rename({extname: '.min.js'})) // Rename to ng-quick-date.min.js
+    .pipe(gulp.dest('client/dist'));            // Write minified to disk
 });
 
 gulp.task('nodemon', function (cb) {
