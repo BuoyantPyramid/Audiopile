@@ -1,24 +1,19 @@
 angular.module('jam.profile', [])
 
-.controller('ProfileController', ['$scope', '$location', 'Profile', 'Auth',
-function ($scope, loc, Profile, Auth) {
-  $scope.user = Auth.getUserData();
-  if (!$scope.user) {
-    Profile.getProfile()
-    .then(function (resp) {
-      $scope.user = resp.data;
-    })
-    .catch(function (error) {
-      console.error('Error getting profile!');
-    });
-  }
+.controller('ProfileController', ['$scope', '$location', 'Auth',
+function ($scope, loc, Auth) {
+  Auth.getUserData()
+  .then(function (userData) {
+    $scope.user = userData;
+  })
+  .catch(console.error);
+  
 
   $scope.updateProfile = function () {
-    Profile.updateUser($scope.user)
+    Auth.updateProfile($scope.user)
     .then(function (res) {
-      console.log('Profile updated', res.data);
-      $scope.profile = Auth.getUserData();
-      loc.path('/songs');
+      console.log('Profile updated', res.data.user);
+      $scope.user = res.data.user;
     })
     .catch(function (error) {
       console.error(error);

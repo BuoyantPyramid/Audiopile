@@ -4,8 +4,17 @@ var config = require('../config/config');
 
 var User = db.User;
 var Group = db.Group;
+var Song = db.Song;
 
 var JWT_SECRET = config.JWT_SECRET || 's00p3R53kritt';
+
+var _compileUserData = function(user) {
+  return Group.findById(user.currentGroupId, {include: [{model: Song}]})
+  .then(function(currentGroup) {
+    user.currentGroup = currentGroup;
+    return user;
+  });
+};
 
 var signup = function (req, res, next) {
   var displayName = req.body.displayName;
@@ -33,10 +42,10 @@ var signup = function (req, res, next) {
         group.addUser(user, {role: 'admin'})
         .then(function() {
           var token = jwt.encode(user, JWT_SECRET);
+          user.currentGroup = group;
           res.json({
             token: token,
-            user: user,
-            currentGroup: group
+            user: user
           });
         });
       });
@@ -45,6 +54,8 @@ var signup = function (req, res, next) {
       next(error);
     });
 };
+
+
 
 var login = function (req, res, next) {
   var email = req.body.email;
@@ -58,12 +69,11 @@ var login = function (req, res, next) {
           .then(function (didMatch) {
             if (didMatch) {
               var token = jwt.encode(user, JWT_SECRET);
-              Group.findById(user.currentGroupId)
-              .then(function(currentGroup) {
+              _compileUserData(user)
+              .then(function(compiledUser) {
                 res.json({
                   token: token,
-                  user: user,
-                  currentGroup: currentGroup
+                  user: compiledUser
                 });
               });
             } else {
@@ -77,6 +87,32 @@ var login = function (req, res, next) {
     });
 };
 
+var getProfile = function(req, res, next) {
+  var user = req.user;
+  _compileUserData(user)
+  .then(function(compiledUser) {
+    res.json({
+      user: compiledUser
+    });
+  });
+};
+
+var updateProfile = function(req, res, next) {
+  var user = req.user;
+  user.update(req.body)
+  .then(function(user) {
+    var token = jwt.encode(user, JWT_SECRET);         
+    res.json({
+      user: user,
+      token: token
+    });
+  })
+  .catch(function(error) {
+    next(error);
+  });
+};
+
+
 var getUser = function(req, res, next) {
   var userId = parseInt(req.params.id);
   User.findById(userId)
@@ -84,9 +120,11 @@ var getUser = function(req, res, next) {
     if (foundUser) {
     // INCLUDE GROUPS TOO???
       res.json({
-        id: foundUser.id,
-        displayName: foundUser.displayName,
-        avatarUrl: foundUser.avatarUrl
+        user: {
+          id: foundUser.id,
+          displayName: foundUser.displayName,
+          avatarUrl: foundUser.avatarUrl
+        }
       });
     } else {
       res.status(404).json('user doesn\'t exist');
@@ -96,23 +134,6 @@ var getUser = function(req, res, next) {
     next(error);
   });
 };
-
-var getProfile = function(req, res, next) {
-  res.json(req.user);
-};
-
-var updateProfile = function(req, res, next) {
-  var user = req.user;
-  user.update(req.body)
-  .then(function(data) {
-    // console.log('updated user: ' + JSON.stringify(data));
-    res.json(data);
-  })
-  .catch(function(error) {
-    next(error);
-  });
-};
-
 
 module.exports = {
   signup: signup,

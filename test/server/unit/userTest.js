@@ -65,7 +65,7 @@ describe('User Controller', function() {
       res.json = function(jsonresponse) {
         expect(jsonresponse.token).to.exist;
         expect(jsonresponse.user).to.exist;
-        expect(jsonresponse.currentGroup).to.exist;
+        expect(jsonresponse.user.currentGroup).to.exist;
         done();
       };
       // var spy = res.json = sinon.spy();
@@ -149,8 +149,8 @@ describe('User Controller', function() {
       res.json = function(jsonresponse) {
         expect(jsonresponse.token).to.exist;
         expect(jsonresponse.user).to.exist;
-        expect(jsonresponse.currentGroup).to.exist;
-        // console.log(JSON.stringify(jsonresponse.currentGroup));
+        expect(jsonresponse.user.currentGroup).to.exist;
+        // console.log(JSON.stringify(jsonresponse.user.currentGroup));
         done();
       };
       UserController.login(dupeReq, res, console.error);
@@ -169,11 +169,12 @@ describe('User Controller', function() {
   });
 
   describe('profile', function() {
-    it('should be able to fetch a user profile', function(done) {
+    it('should be able to fetch a user profile with currenGroup', function(done) {
       var res = {};
       res.json = function(jsonresponse) {
-        expect(jsonresponse.displayName).to.equal(dupeReq.body.displayName);
-        expect(jsonresponse.email).to.equal(dupeReq.body.email);
+        expect(jsonresponse.user.displayName).to.equal(dupeReq.body.displayName);
+        expect(jsonresponse.user.email).to.equal(dupeReq.body.email);
+        expect(jsonresponse.user.currentGroup).to.exist;
         done();
       };
       res.status = function(status) {
@@ -186,7 +187,8 @@ describe('User Controller', function() {
       var res = {};
       dupeReq.body = {displayName: 'Pen'};
       res.json = function(jsonresponse) {
-        expect(jsonresponse.displayName).to.equal(dupeReq.body.displayName);
+        expect(jsonresponse.user.displayName).to.equal(dupeReq.body.displayName);
+        expect(jsonresponse.user.currentGroup).to.exist;
         done();
       };
       res.status = function(status) {

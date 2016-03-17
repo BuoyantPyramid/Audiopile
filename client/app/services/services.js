@@ -31,27 +31,10 @@ angular.module('jam.services', [])
 }])
 
 .factory('Profile', ['$http', function(http) {
-  var updateUser = function(profile) {
-    return http({
-      method: 'PUT',
-      url: '/api/users/profile',
-      data: profile
-    });
-  };
-  var getProfile = function(profile) {
-    return http({
-      method: 'GET',
-      url: '/api/users/profile'
-    });
-  };
-
-  return {
-    updateUser: updateUser,
-    getProfile: getProfile
-  };
+ 
 }])
 
-.factory('Auth', ['$http', '$location', '$window', 'Profile', function (http, loc, win, Profile) {
+.factory('Auth', ['$http', '$location', '$window', function (http, loc, win) {
   // This is responsible for authenticating our user
   // by exchanging the user's email and password
   // for a JWT from the server
@@ -92,16 +75,8 @@ angular.module('jam.services', [])
       url: '/api/users/' + userId
     })
     .then(function(resp) {
-      return resp.data;
+      return resp.data.user;
     });
-  };
-
-  var getUserData = function() {
-    return userData;
-  };
-
-  var isAuth = function () {
-    return !!win.localStorage.getItem('com.jam');
   };
 
   var logout = function () {
@@ -110,7 +85,42 @@ angular.module('jam.services', [])
     loc.path('/login');
   };
 
+  var updateProfile = function(profile) {
+    return http({
+      method: 'PUT',
+      url: '/api/users/profile',
+      data: profile
+    });
+  };
+  
+  var getProfile = function(profile) {
+    return http({
+      method: 'GET',
+      url: '/api/users/profile'
+    });
+  };
+
+  var getUserData = function( force ) {
+    force = force || false;
+    return new Promise (function() {
+      if (userData && !force) {
+        return userData;
+      }
+      getProfile()
+      .then(function(response) {
+        userData = response.data.user;
+        return userData;
+      });
+    });
+  };
+
+  var isAuth = function () {
+    return !!win.localStorage.getItem('com.jam');
+  };
+
   return {
+    updateProfile: updateProfile,
+    getProfile: getProfile,
     login: login,
     signup: signup,
     getUser: getUser,
