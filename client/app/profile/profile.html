@@ -1,10 +1,7 @@
 <div id='profile'>
   <h2>Profile</h2>
   <form id='profileForm'>
-    <nav-bar ng-click="logout()"></nav-bar>
-    <ul class="nav">
-      <li><a class="nav-link" href="/#/songs">Songs!</a></li>
-    </ul>
+    <nav-bar></nav-bar>
     <input type='text' ng-model='user.displayName' placeholder='Name'>
     <button type='submit' ng-click='updateProfile()'>Update</button>
   </form>

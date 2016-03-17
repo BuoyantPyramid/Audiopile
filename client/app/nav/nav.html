@@ -1,6 +1,12 @@
 <div>
-  <ul class="nav">
-    <li>{{ user.displayName }}</li>
-    <li><a href class="nav-link" ng-click="logout()">Logout</a></li>
-  </ul>  
+  <nav>
+    <ul class="nav">
+      <li><span class="main-title">Jam Record</span></li>
+      <li>{{ user.displayName }}</li>
+      <li><a class="nav-link" href="/#/songs">Songs!</a></li>
+      <li><a class="nav-link" href="/#/profile">Profile!</a></li>
+      <li><a class="nav-link" href="/#/upload">Upload!</a></li>
+      <li><a href class="nav-link" ng-click="logout()">Logout</a></li>
+    </ul>
+  </nav>  
 </div>

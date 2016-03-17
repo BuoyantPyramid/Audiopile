@@ -40,7 +40,11 @@ angular.module('jam', [
 .directive('navBar', function() {
   return {
     restrict: 'E',
-    templateUrl: 'app/nav/nav.html'
+    templateUrl: 'app/nav/nav.html',
+    scope: {},
+    controller: ['$scope', 'Auth', function($scope, Auth) {
+      $scope.logout = Auth.logout;
+    }]
   };
 })
 .factory('AttachTokens', function ($window) {
