@@ -15,10 +15,14 @@ body {
 }
 
 ul.nav {
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 
 ul.nav a {
-  display: block;
-  width: 15em;
+  float: right;
+  display: inline;
+  width: 5em;
+  top: 0;
 }
