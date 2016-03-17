@@ -11,6 +11,10 @@ var JWT_SECRET = config.JWT_SECRET || 's00p3R53kritt';
 var _compileUserData = function(user) {
   return Group.findById(user.currentGroupId, {include: [{model: Song}]})
   .then(function(currentGroup) {
+
+    // FUCK THIS HACK
+    user = JSON.parse(JSON.stringify(user));
+    delete user.password;
     user.currentGroup = currentGroup;
     return user;
   });
@@ -42,10 +46,11 @@ var signup = function (req, res, next) {
         group.addUser(user, {role: 'admin'})
         .then(function() {
           var token = jwt.encode(user, JWT_SECRET);
-          user.currentGroup = group;
-          res.json({
-            token: token,
-            user: user
+          _compileUserData(user).then(function(compiledUser) {
+            res.json({
+              token: token,
+              user: compiledUser
+            });
           });
         });
       });
@@ -101,10 +106,13 @@ var updateProfile = function(req, res, next) {
   var user = req.user;
   user.update(req.body)
   .then(function(user) {
-    var token = jwt.encode(user, JWT_SECRET);         
-    res.json({
-      user: user,
-      token: token
+    var token = jwt.encode(user, JWT_SECRET);
+    _compileUserData(user)
+    .then(function(compiledUser) {
+      res.json({
+        user: compiledUser,
+        token: token
+      });
     });
   })
   .catch(function(error) {

@@ -14,8 +14,6 @@ var req = {
     password: 'thedog'
   }
 };
-
-
 var dupeReq = {
   body: {
     email: 'finn@ooo.com',
@@ -30,8 +28,11 @@ var dbUser;
 var clearDB = function(done) {
   var res = {
     json: function(response) {
-      dbUser = response.user;
-      done();
+      User.findOne({where: {'email': dupeReq.body.email}}).
+      then (function(user) {
+        dbUser = user;
+        done();
+      });
     }
   };
   dbModels.db.query('DELETE from USERS where true')
@@ -66,6 +67,7 @@ describe('User Controller', function() {
         expect(jsonresponse.token).to.exist;
         expect(jsonresponse.user).to.exist;
         expect(jsonresponse.user.currentGroup).to.exist;
+        expect(jsonresponse.user.password).to.not.exist;
         done();
       };
       // var spy = res.json = sinon.spy();
@@ -150,6 +152,7 @@ describe('User Controller', function() {
         expect(jsonresponse.token).to.exist;
         expect(jsonresponse.user).to.exist;
         expect(jsonresponse.user.currentGroup).to.exist;
+        expect(jsonresponse.user.password).to.not.exist;
         // console.log(JSON.stringify(jsonresponse.user.currentGroup));
         done();
       };
@@ -175,6 +178,7 @@ describe('User Controller', function() {
         expect(jsonresponse.user.displayName).to.equal(dupeReq.body.displayName);
         expect(jsonresponse.user.email).to.equal(dupeReq.body.email);
         expect(jsonresponse.user.currentGroup).to.exist;
+        expect(jsonresponse.user.password).to.not.exist;
         done();
       };
       res.status = function(status) {
@@ -189,6 +193,7 @@ describe('User Controller', function() {
       res.json = function(jsonresponse) {
         expect(jsonresponse.user.displayName).to.equal(dupeReq.body.displayName);
         expect(jsonresponse.user.currentGroup).to.exist;
+        expect(jsonresponse.user.password).to.not.exist;
         done();
       };
       res.status = function(status) {

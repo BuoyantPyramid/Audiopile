@@ -52,7 +52,7 @@ var User = db.define('user', {
         .then(function(hash) {
           user.password = hash;
         });
-    }
+    },
   }
 });
 

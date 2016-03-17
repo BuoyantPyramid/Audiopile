@@ -3,6 +3,7 @@
   <nav-bar></nav-bar>
   <label for="search">Search: </label>
   <input ng-model="query" type="text" name="search" />
+  <button class="refresh-button" ng-click="refreshSongs()">refresh</button>
   <div ng-repeat="song in data.songs | filter:query | orderBy:'-timestamp'" class="song">
     <div class="info">
       <div class="title"> {{ song.title }} </div>
