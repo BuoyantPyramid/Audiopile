@@ -1,5 +1,5 @@
 // Replace this userEmail field later
-var userEmail = 'buoyantpyramid22@gmail.com';
+var userEmail = 'buoyantpyramid25@gmail.com';
 
 describe('Login processes', function() {
 
@@ -35,7 +35,7 @@ describe('Login processes', function() {
       loginButton.click();
 
       var profileLink = element(by.css('#container > .navigation > ul > li > a'));
-      expect(uploadLink.getText()).toEqual('Profile!');
+      expect(profileLink.getText()).toEqual('Profile!');
 
     });
   });
