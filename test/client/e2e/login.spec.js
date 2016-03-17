@@ -1,4 +1,4 @@
-// Replace this later
+// Replace this userEmail field later
 var userEmail = 'buoyantpyramid22@gmail.com';
 
 describe('Login processes', function() {
@@ -27,15 +27,16 @@ describe('Login processes', function() {
       browser.get('http://localhost:3000');
       var email = element(by.model('user.email'));
       var pass = element(by.model('user.password'));
-      var loginButton = element(by.buttonText('Login'));
+      var loginButton = element(by.id('loginButton'));
 
       email.sendKeys(userEmail);
       pass.sendKeys('password');
 
       loginButton.click();
 
-      var uploadLink = element(by.css('#container > .navigation > ul > li > a'));
+      var profileLink = element(by.css('#container > .navigation > ul > li > a'));
       expect(uploadLink.getText()).toEqual('Profile!');
+
     });
   });
 });
