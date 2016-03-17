@@ -1,5 +1,5 @@
 // Replace this later
-var userEmail = 'buoyantpyramid11@gmail.com';
+var userEmail = 'buoyantpyramid15@gmail.com';
 
 describe('Login processes', function() {
 
@@ -12,7 +12,7 @@ describe('Login processes', function() {
     it('allow new users to signup', function() {
       var email = element(by.model('user.email'));
       var pass = element(by.model('user.password'));
-      var signupButton = element(by.id('signupButton'));
+      var signupButton = element(by.buttonText('Signup'));
 
       email.sendKeys(userEmail);
       pass.sendKeys('password');
@@ -27,7 +27,7 @@ describe('Login processes', function() {
       browser.get('http://localhost:3000');
       var email = element(by.model('user.email'));
       var pass = element(by.model('user.password'));
-      var loginButton = element(by.id('loginButton'));
+      var loginButton = element(by.buttonText('Login'));
 
       email.sendKeys(userEmail);
       pass.sendKeys('password');

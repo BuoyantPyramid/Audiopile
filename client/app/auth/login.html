@@ -7,7 +7,7 @@
     <input type='password' name='password' ng-model='user.password' placeholder='password' ng-minlength='8' required />
     <span class="error" ng-show="loginForm.password.$error.required">
       Required!</span>
-    <button ng-click='login()' ng-disabled='loginForm.$invalid' id='loginButton'>Login</button>
-    <button ng-click='signup()' ng-disabled='loginForm.$invalid' id='signupButton'>Signup</button>
+    <button ng-click='login()' ng-disabled='loginForm.$invalid'>Login</button>
+    <button ng-click='signup()' ng-disabled='loginForm.$invalid'>Signup</button>
   </form>
 </div>
