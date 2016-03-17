@@ -57,16 +57,18 @@ describe('User Controller', function() {
       done();
     });
   });
-  describe('create user', function() {  
-    it('should call res.json to return a json object', function(done) {
+  describe('create user via signup', function() {  
+    it('should call res.json to return a json object with a user, token, and currentGroup', function(done) {
 
       var res = {};
       // make my own damn spy
       res.json = function(jsonresponse) {
-        expect(jsonresponse).to.have.property('token');
+        expect(jsonresponse.token).to.exist;
+        expect(jsonresponse.user).to.exist;
+        expect(jsonresponse.currentGroup).to.exist;
         done();
       };
-      // var spy = res.json = sinon.stub();
+      // var spy = res.json = sinon.spy();
       UserController.signup(req, res, console.error);
     });
 
@@ -140,11 +142,15 @@ describe('User Controller', function() {
       });
     });
   });
+
   describe('user login', function() {
-    it('should login an existing user', function(done) {
+    it('should login an existing user and return a token, user, and currentGroup', function(done) {
       var res = {};
       res.json = function(jsonresponse) {
-        expect(jsonresponse).to.have.property('token');
+        expect(jsonresponse.token).to.exist;
+        expect(jsonresponse.user).to.exist;
+        expect(jsonresponse.currentGroup).to.exist;
+        // console.log(JSON.stringify(jsonresponse.currentGroup));
         done();
       };
       UserController.login(dupeReq, res, console.error);

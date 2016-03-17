@@ -35,7 +35,8 @@ var signup = function (req, res, next) {
           var token = jwt.encode(user, JWT_SECRET);
           res.json({
             token: token,
-            user: user
+            user: user,
+            currentGroup: group
           });
         });
       });
@@ -57,9 +58,13 @@ var login = function (req, res, next) {
           .then(function (didMatch) {
             if (didMatch) {
               var token = jwt.encode(user, JWT_SECRET);
-              res.json({
-                token: token,
-                user: user
+              user.getCurrentGroup().
+              then(function(currentGroup) {
+                res.json({
+                  token: token,
+                  user: user,
+                  currentGroup: currentGroup
+                });
               });
             } else {
               return next(new Error('Incorrect password'));

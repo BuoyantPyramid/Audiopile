@@ -4,6 +4,8 @@ var dbModels = require('../../../server/db/database.js');
 var Song = dbModels.Song; 
 var User = dbModels.User; 
 var Group = dbModels.Group; 
+var Playlist = dbModels.Playlist; 
+var UserGroups = dbModels.UserGroups; 
 dbModels.db.options.logging = false;
 
 
@@ -13,15 +15,15 @@ before(function (done) {
   .then(function() {
     return Group.sync({force: true});
   })
-  // .then(function() {
-  //   return Playlist.sync({force: true});
-  // })
+  .then(function() {
+    return Playlist.sync({force: true});
+  })
   .then(function() {
     return Song.sync({force: true});
   })
-  // .then(function() {
-  //   return UserGroups.sync({force: true});
-  // });
+  .then(function() {
+    return UserGroups.sync({force: true});
+  })
   .then(function() {
     done();
   });
@@ -32,9 +34,12 @@ describe('User Model', function () {
     expect(User).to.be.instanceOf(Sequelize.Model);
   });
   
-  it('should have a schema with fields: email, displayName, password', function (done) {
+  it('should have a schema with fields: id, email, displayName, password', function (done) {
     User.describe().then(function(schema) {
-      expect(schema).to.include.keys('email', 'displayName', 'password', 'avatarUrl');
+      expect(schema.id).to.exist;
+      expect(schema.email).to.exist;
+      expect(schema.displayName).to.exist;
+      expect(schema.password).to.exist;
       done();
     });
   });
