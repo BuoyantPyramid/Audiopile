@@ -1,7 +1,7 @@
-<div id='profile'>
+<div class='profile'>
+  <nav-bar></nav-bar>
   <h2>Profile</h2>
-  <form id='profileForm'>
-    <nav-bar></nav-bar>
+  <form name="profileForm">
     <input type='text' ng-model='user.displayName' placeholder='Name'>
     <button type='submit' ng-click='updateProfile()'>Update</button>
   </form>
