@@ -11,7 +11,6 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var ngmin = require("gulp-ngmin");
 var prefix = require('gulp-autoprefixer');
-var KarmaServer = require('karma').Server;
 
 // the paths to our app files
 var paths = {
@@ -35,13 +34,6 @@ gulp.task('browser-sync', ['nodemon'], function() {
     proxy: 'http://localhost:3000',
     port: 5000
   });
-});
-
-// Run our karma tests
-gulp.task('karma', function (done) {
-  new KarmaServer({
-    configFile: __dirname + '/karma.conf.js'
-  }, done).start();
 });
 
 // Minify the things

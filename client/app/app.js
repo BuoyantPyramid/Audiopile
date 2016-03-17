@@ -44,6 +44,12 @@ angular.module('jam', [
     scope: {},
     controller: ['$scope', 'Auth', function($scope, Auth) {
       $scope.logout = Auth.logout;
+      $scope.user = {};
+      Auth.getUserData()
+      .then(function (userData) {
+        $scope.user = userData;
+      })
+      .catch(console.error);
     }]
   };
 })

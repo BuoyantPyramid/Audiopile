@@ -34,7 +34,7 @@ angular.module('jam.services', [])
  
 }])
 
-.factory('Auth', ['$http', '$location', '$window', function (http, loc, win) {
+.factory('Auth', ['$http', '$location', '$window', '$q', function (http, loc, win, q) {
   // This is responsible for authenticating our user
   // by exchanging the user's email and password
   // for a JWT from the server
@@ -102,14 +102,17 @@ angular.module('jam.services', [])
 
   var getUserData = function( force ) {
     force = force || false;
-    return new Promise (function() {
+    return q(function(resolve, reject) {
       if (userData && !force) {
-        return userData;
+        resolve(userData);
       }
       getProfile()
       .then(function(response) {
         userData = response.data.user;
-        return userData;
+        resolve(userData);
+      })
+      .catch(function (error) {
+        reject(error);
       });
     });
   };
