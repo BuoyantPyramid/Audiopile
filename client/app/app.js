@@ -8,9 +8,6 @@ angular.module('jam', [
   'ngAnimate',
   'angularFileUpload'
 ])
-.run(function($rootScope) {
-  $rootScope.user = {};
-})
 .config(function ($routeProvider, $httpProvider) {
   $routeProvider
     .when('/login', {
@@ -39,6 +36,12 @@ angular.module('jam', [
   // We add our $httpInterceptor into the array
   // of interceptors. Think of it like middleware for your ajax calls
   $httpProvider.interceptors.push('AttachTokens');
+})
+.directive('navBar', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'app/nav/nav.html'
+  };
 })
 .factory('AttachTokens', function ($window) {
   // this is an $httpInterceptor

@@ -20,10 +20,4 @@ function ($scope, loc, Auth) {
     });
   };
   $scope.logout = Auth.logout;
-}])
-.directive('navBar', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'app/nav/nav.html'
-  };
-});
+}]);
