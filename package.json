@@ -52,15 +52,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.2.0",
     "gulp-uglify": "^1.5.3",
-    "karma": "^0.13.22",
-    "karma-chai": "^0.1.0",
-    "karma-mocha": "^0.2.2",
-    "karma-nyan-reporter": "^0.2.3",
-    "karma-phantomjs-launcher": "^1.0.0",
-    "karma-sinon": "^1.0.4",
-    "karma-unicorn-reporter": "^0.1.4",
     "mocha": "^2.4.5",
-    "phantomjs-prebuilt": "^2.1.5",
     "sinon": "^1.17.3"
   }
 }
