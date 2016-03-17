@@ -13,3 +13,12 @@ body {
 
   background-color: rgba($red, $green, $blue, $alpha);
 }
+
+ul.nav {
+  list-style: none;
+}
+
+ul.nav a {
+  display: block;
+  width: 15em;
+}
