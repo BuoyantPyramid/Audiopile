@@ -30,7 +30,7 @@ angular.module('jam', [
     .when('/upload', {
       templateUrl: 'app/upload/upload.html',
       controller: 'UploadController',
-      authenticate:true
+      authenticate: true
     })
     .otherwise({
       redirectTo: '/songs'
