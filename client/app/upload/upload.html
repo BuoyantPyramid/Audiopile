@@ -4,8 +4,13 @@
   <ul>
     <li ng-repeat="item in uploader.queue">
       Name: <span ng-bind="item.file.name"></span><br/>
-      <button ng-click="item.upload()">upload</button>
+      Size: <span ng-bind="item.file.size"></span><br/>
+      <button ng-click="item.upload()">Upload</button>
+      <button ng-click="item.cancel()">Cancel</button>
+      <button ng-click="item.remove()">Remove</button>
     </li>
+    </br>
     <button ng-click="uploader.uploadAll()">Upload All</button>
+    <span>{{uploader.progress}}%</span>
   </ul>
 </div>

@@ -3,6 +3,7 @@ var Song = require('../controllers/song');
 var Group = require('../controllers/group');
 var Playlist = require('../controllers/playlist');
 var User = require('../controllers/user');
+var Upload = require('../controllers/upload');
 
 var routing = function (app, express) {
   var apiRoutes = express.Router(); 
@@ -32,6 +33,9 @@ var routing = function (app, express) {
   // apiRoutes.put('/playlists/:id/remove', Playlist.removeSong);
   apiRoutes.get('/playlists/:id/', Playlist.fetchSongs);
   // apiRoutes.delete('/playlists/:id', Playlist.delete);
+
+  // Upload handling
+  apiRoutes.post('/upload/', Upload.catchUpload);
 
   // Handle error logging of requests that are destined for above routes
   apiRoutes.use(helpers.errorLogger);
