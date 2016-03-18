@@ -19,5 +19,4 @@ function ($scope, loc, Auth) {
       console.error(error);
     });
   };
-  $scope.logout = Auth.logout;
 }]);

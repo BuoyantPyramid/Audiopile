@@ -13,7 +13,7 @@ angular.module('jam.songs', [])
     .catch(console.error);
   };
 
-  Auth.getUserData()
+  Auth.getUserData(true)
   .then(function (user) {
     $scope.user = user;
     $scope.data.songs = user.currentGroup.songs;

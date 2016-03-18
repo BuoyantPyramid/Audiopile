@@ -1,16 +1,22 @@
-<div id='login'>
+<div class="login">
   <header>
     <span class="main-title">Jam Record</span>
   </header>
   <h2>Login or Signup</h2>
-  <form name='loginForm'>
-    <input  name='email' ng-model='user.email' placeholder='email' type='email' ng-pattern='/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/' required />
+  <form name="loginForm">
+    <input  name="email" ng-model="user.email" placeholder="email" type="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" required />
     <span class="error" ng-show="loginForm.email.$error.email">
       Not valid email!</span>
-    <input type='password' name='password' ng-model='user.password' placeholder='password' ng-minlength='8' required />
+    <input type="password" name="password" ng-model="newPassword" placeholder="password" ng-minlength="8" required />
     <span class="error" ng-show="loginForm.password.$error.required">
       Required!</span>
-    <button ng-click='login()' ng-disabled='loginForm.$invalid'>Login</button>
-    <button ng-click='signup()' ng-disabled='loginForm.$invalid'>Signup</button>
+    <button ng-click="login()" ng-disabled="loginForm.$invalid">Login</button>
+    <button ng-click="confirm = true" ng-disabled="loginForm.$invalid">Signup</button>
+    
+    <div class="confirm-account" ng-show="confirm">
+      <input type="password" name="passwordConfirm" ng-model="user.password" placeholder="confirm password" />
+      <button ng-click="signup(newPassword)" ng-disabled="loginForm.$invalid">Create Account</button>
+      <div ng-show="passMismatch">Passwords did not match!</div>
+    </div>
   </form>
 </div>
