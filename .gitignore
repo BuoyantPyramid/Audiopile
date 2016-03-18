@@ -46,3 +46,5 @@ client/dist/
 # Ignore config file
 config.js
 
+# ignore uploadInbox
+server/uploadInbox
