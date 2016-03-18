@@ -90,7 +90,12 @@ angular.module('jam.services', [])
       method: 'PUT',
       url: '/api/users/profile',
       data: profile
-    });
+    })
+    .then(function(res) {
+      userData = res.data.user;
+      return res;
+    })
+    .catch(console.error);
   };
   
   var getProfile = function(profile) {
