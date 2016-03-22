@@ -149,12 +149,25 @@ angular.module('jam.services', [])
     .catch(console.error);
   };
 
-  var sendInvite = function (band, email) {
-    var data = {email: email, band: band};
+  // var sendEmailInvite = function (group, email) {
+  //   var data = {email: email, groupname: group.name};
+    
+  //   return http({
+  //     method: 'post',
+  //     url: '/api/groups/' + group.id + '/einvite',
+  //     data: data
+  //   })
+  //   .then(function (res) {
+  //     return res.data;
+  //   });
+  // };
+
+  var sendInvite = function (group, email) {
+    var data = {email: email, group: group};
     
     return http({
       method: 'post',
-      url: '/api/users/invite',
+      url: '/api/groups/' + group.id + '/invite',
       data: data
     })
     .then(function (res) {

@@ -48,14 +48,14 @@ var verifyToken = function (req, res, next) {
 };
 
 var sendEmailInvite = function(req, res, next) {
-  var band = req.body.band;
+  var groupname = req.body.groupname;
   var email = req.body.email;
 
   var data = {
-    from: 'Excited User <jamsesh@samples.mailgun.org>',
+    from: 'Jam Record <jamrecord@samples.mailgun.org>',
     to: email,
     subject: 'Hello',
-    text: 'You\'ve been invited to join ' + band + ' at Jamsesh!\n' +
+    text: 'You\'ve been invited to join ' + groupname + ' at JamRecord!\n' +
           'Follow the link below to sign up\n' +
           'Link: http://localhost:3000/#/login/' + email
   };

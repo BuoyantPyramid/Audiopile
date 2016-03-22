@@ -59,7 +59,8 @@ var routing = function (app, express) {
   apiRoutes.post('/upload/', Upload.catchUpload);
 
   // Send email invites
-  apiRoutes.post('/users/invite', helpers.sendEmailInvite);
+  // apiRoutes.post('/groups/:id/invite', Group.addUser);
+  apiRoutes.post('/groups/:id/invite', Group.sendInvite);
 
   // Handle error logging of requests that are destined for above routes
   apiRoutes.use(helpers.errorLogger);

@@ -13,7 +13,6 @@ angular.module('jam.groupSettings', [])
 
   $scope.sendInvite = function() {
     Groups.sendInvite($scope.group.name, $scope.invite);
-    console.log($scope.invite);
   };
 
   $scope.updateGroupProfile = function() {
