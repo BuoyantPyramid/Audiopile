@@ -2,10 +2,10 @@ var db = require('../db/database');
 var jwt = require('jwt-simple');
 var config = require('../config/config');
 var path = require('path');
-
 var User = db.User;
 var Group = db.Group;
 var Song = db.Song;
+var UserModel = require('../models/userModel');
 
 var JWT_SECRET = config.JWT_SECRET || 's00p3R53kritt';
 
@@ -26,45 +26,28 @@ var signup = function (req, res, next) {
   var email = req.body.email;
   var password = req.body.password;
 
-  User.findOne({where: {email: email}})
-    .then(function (existingUser) {
-      if (existingUser) {
-        res.status(400).json('User already exists!');
-      } else {
-        return Group.create({
-          name: req.body.displayName,
-        });
-      }
-    })
-    .then(function (group) {
-      User.create({
-        displayName: displayName,
-        email: email,
-        password: password,
-        currentGroupId: group.id
-      })
+  UserModel.getUserByEmail(email)
+  .then(function(user) {
+    if (user) {
+      res.status(400).json('User already exists');
+    } else {
+      UserModel.createUser(email, displayName, password)
       .then(function (user) {
-        group.addUser(user, {role: 'admin'})
-        .then(function() {
-          var token = jwt.encode(user, JWT_SECRET);
-          _compileUserData(user).then(function(compiledUser) {
-            res.json({
-              token: token,
-              user: compiledUser
-            });
+        var token = jwt.encode(user, JWT_SECRET);
+        _compileUserData(user).then(function (compiledUser) {
+          res.json({
+            token: token,
+            user: compiledUser
           });
-        });
-      })
-      .catch(function(err) {
-        res.status(400).json(err);
+        });  
       });
-    }) 
-    .catch(function (error) {
-      next(error);
-    });
+    }
+  })
+  .catch(function (error) {
+    res.status(400).json(error);
+    next(error);
+  });
 };
-
-
 
 var login = function (req, res, next) {
   var email = req.body.email;

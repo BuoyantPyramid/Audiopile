@@ -1,8 +1,11 @@
 var path = require('path');
 var db = require('../db/database');
+var config = require('../config/config');
+var mailgun = require('mailgun-js')({apiKey: config.mailgun.api_key, domain: config.mailgun.domain});
 var Group = db.Group;
 var Song = db.Song;
 var User = db.User;
+var UserModel = require('../models/userModel');
 
 var createGroup = function(req, res, next) {
   Group.create({
@@ -30,23 +33,30 @@ var fetchSongs = function(req, res, next) {
   });
 };
 
-
-var addUser = function(req, res, next) {
+var addUserToGroup = function(req, res, next) {
   // roles:
   //  admin, member, pending
-  var role = req.body.role;
   var groupId = req.params.id;
   var userId = req.body.userId;
-  Group.findOne({where: {id: groupId}})
+  var role = req.body.role;
+
+  User.findOne({})
+  addUser(groupId, userId, role, function(user) {
+    res.json(user);
+  });
+};
+
+var addUser = function(groupId, userId, role, cb) {
+  return Group.findOne({where: {id: groupId}})
   .then(function(group) {
     User.findOne({where: {id: userId}})
     .then(function(user) {
       group.addUser(user, {role: role});
-      res.json(user);
+      cb(user);
     });
   })
   .catch(function(err) {
-    next(err);
+    return error;
   });
 };
 
@@ -81,7 +91,6 @@ var fetchPlaylists = function(req, res, next) {
 };
 
 var updateGroupInfo = function(req, res, next) {
-
   Group.update(req.body, {
     where: {
       id: req.body.id
@@ -112,12 +121,61 @@ var getBanner = function(req, res, next) {
   });
 };
 
+// Redirects to either send email invite or add user function
+var sendInvite = function(req, res, next) {
+  var email = req.body.email;
+  var group = req.body.group;
+  var groupId = req.params.id;
+  User.findOne({where: {email: email}})
+  .then(function (user) {
+    if (user) {
+      addUser(group.id, user.id, 'pending', function(user) {
+        res.json(user);
+      });
+    } else {
+      sendEmailInvite(group.name, email, function(value) {
+        res.json(value);
+      })
+    }
+  })
+};
+
+var sendEmailInvite = function(groupname, email) {
+  var password = Math.random().toString(36).substring(5);
+  return new Promise(function (resolve, reject) {
+    UserModel.createUser(email, '', password)
+    .then(function (user) {
+      var data = {
+        from: 'Jam Record <jamrecord@samples.mailgun.org>',
+        to: email,
+        subject: 'Hello',
+        text: 'You\'ve been invited to join ' + groupname + ' at JamRecord!\n' +
+              'Follow the link below to sign up\n' +
+              'Link: http://localhost:3000/#/login/' + email + '\n' + 
+              'Please use the following temporary password: ' + password
+      };
+       
+      mailgun.messages().send(data, function (error, body) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve('Email sent successfully');
+        }  
+      }); 
+    })
+    .catch(function (error) {
+      reject(error);
+    })
+  });
+};
+
 module.exports = {
   createGroup: createGroup,
   fetchSongs: fetchSongs,
   fetchPlaylists: fetchPlaylists,
-  addUser: addUser,
+  addUserToGroup: addUserToGroup,
   fetchUsers: fetchUsers,
   updateGroupInfo: updateGroupInfo,
-  getBanner: getBanner
+  getBanner: getBanner,
+  sendInvite: sendInvite
 };
