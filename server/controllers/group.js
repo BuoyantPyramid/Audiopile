@@ -5,6 +5,7 @@ var mailgun = require('mailgun-js')({apiKey: config.mailgun.api_key, domain: con
 var Group = db.Group;
 var Song = db.Song;
 var User = db.User;
+var UserModel = require('../models/userModel');
 
 var createGroup = function(req, res, next) {
   Group.create({
@@ -139,22 +140,32 @@ var sendInvite = function(req, res, next) {
   })
 };
 
-var sendEmailInvite = function(groupname, email, cb) {
-  var data = {
-    from: 'Jam Record <jamrecord@samples.mailgun.org>',
-    to: email,
-    subject: 'Hello',
-    text: 'You\'ve been invited to join ' + groupname + ' at JamRecord!\n' +
-          'Follow the link below to sign up\n' +
-          'Link: http://localhost:3000/#/login/' + email
-  };
-   
-  mailgun.messages().send(data, function (error, body) {
-    if (error) {
-      cb(error);
-    } else {
-      cb('Email sent successfully');
-    }  
+var sendEmailInvite = function(groupname, email) {
+  var password = Math.random().toString(36).substring(5);
+  return new Promise(function (resolve, reject) {
+    UserModel.createUser(email, '', password)
+    .then(function (user) {
+      var data = {
+        from: 'Jam Record <jamrecord@samples.mailgun.org>',
+        to: email,
+        subject: 'Hello',
+        text: 'You\'ve been invited to join ' + groupname + ' at JamRecord!\n' +
+              'Follow the link below to sign up\n' +
+              'Link: http://localhost:3000/#/login/' + email + '\n' + 
+              'Please use the following temporary password: ' + password
+      };
+       
+      mailgun.messages().send(data, function (error, body) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve('Email sent successfully');
+        }  
+      }); 
+    })
+    .catch(function (error) {
+      reject(error);
+    })
   });
 };
 
