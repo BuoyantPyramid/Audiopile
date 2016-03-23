@@ -36,7 +36,7 @@ var routing = function (app, express) {
   // Add, update and retrieve groups
   apiRoutes.put('/groups/info', Group.updateGroupInfo);
   apiRoutes.post('/groups/', Group.createGroup);
-  apiRoutes.post('/groups/:id/users/', Group.addUser);
+  apiRoutes.post('/groups/:id/users/', Group.addUserToGroup);
   apiRoutes.get('/groups/:id/users/', Group.fetchUsers);
   apiRoutes.get('/groups/:id/playlists/', Group.fetchPlaylists);
 
@@ -59,7 +59,6 @@ var routing = function (app, express) {
   apiRoutes.post('/upload/', Upload.catchUpload);
 
   // Send email invites
-  // apiRoutes.post('/groups/:id/invite', Group.addUser);
   apiRoutes.post('/groups/:id/invite', Group.sendInvite);
 
   // Handle error logging of requests that are destined for above routes
