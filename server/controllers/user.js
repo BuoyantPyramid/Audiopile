@@ -2,6 +2,7 @@ var db = require('../db/database');
 var jwt = require('jwt-simple');
 var config = require('../config/config');
 var path = require('path');
+// var Promise = require('bluebird');
 
 var User = db.User;
 var Group = db.Group;
@@ -21,50 +22,70 @@ var _compileUserData = function(user) {
   });
 };
 
+var userExists = function (email) {
+  return new Promise(function (resolve, reject) {
+    User.findOne({where: {email: email}})
+    .then(function (user) {
+      resolve(user !== null);
+    })
+    .catch(function (err) {
+      reject(err);
+    })
+  })
+}
+
 var signup = function (req, res, next) {
   var displayName = req.body.displayName;
   var email = req.body.email;
   var password = req.body.password;
 
-  User.findOne({where: {email: email}})
-    .then(function (existingUser) {
-      if (existingUser) {
-        res.status(400).json('User already exists!');
-      } else {
-        return Group.create({
-          name: req.body.displayName,
-        });
-      }
+  userExists(email)
+  .then(function(userExists) {
+    if (userExists) {
+      res.status(400).json('User already exists');
+    } else {
+      createUser(email, displayName, password)
+      .then(function (user) {
+        var token = jwt.encode(user, JWT_SECRET);
+        _compileUserData(user).then(function (compiledUser) {
+          res.json({
+            token: token,
+            user: compiledUser
+          });
+        });  
+      });
+    }
+  })
+  .catch(function (error) {
+    res.status(400).json(error);
+    next(error);
+  });
+};
+
+var createUser = function (email, displayName, password, cb) {
+  return new Promise(function (resolve, reject) {
+    return Group.create({
+      name: displayName,
     })
     .then(function (group) {
-      User.create({
+      return User.create({
         displayName: displayName,
         email: email,
         password: password,
         currentGroupId: group.id
       })
       .then(function (user) {
-        group.addUser(user, {role: 'admin'})
-        .then(function() {
-          var token = jwt.encode(user, JWT_SECRET);
-          _compileUserData(user).then(function(compiledUser) {
-            res.json({
-              token: token,
-              user: compiledUser
-            });
+        return group.addUser(user, {role: 'admin'})
+          .then(function () {
+            resolve(user);
           });
         });
       })
-      .catch(function(err) {
-        res.status(400).json(err);
+      .catch(function (error) {
+        reject(error);
       });
-    }) 
-    .catch(function (error) {
-      next(error);
     });
 };
-
-
 
 var login = function (req, res, next) {
   var email = req.body.email;
@@ -203,5 +224,7 @@ module.exports = {
   getProfile: getProfile,
   getAvatar: getAvatar,
   setAvatar: setAvatar,
-  getGroups: getGroups
+  getGroups: getGroups,
+  userExists: userExists,
+  createUser: createUser  
 };
