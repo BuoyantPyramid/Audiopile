@@ -10,14 +10,15 @@ var addSong = function (songData) {
   return Song.create(songData);
 };
 
-var addCompressedLink = function(songID, compressedID) {
+var addCompressedLink = function(songID, compressedID, amplitudeData) {
   console.log('--- --- Add compressed link Song.find() update DB', songID, compressedID);
   return new Promise(function(resolve, reject) {
     Song.find({where: {id: songID}})
     .then(function(song) {
       if (song) {
         song.updateAttributes({
-          'compressedAddress': 'https://' + awsConfig.bucket + '.s3.amazonaws.com/audio/' + compressedID
+          'compressedAddress': 'https://' + awsConfig.bucket + '.s3.amazonaws.com/audio/' + compressedID,
+          'amplitudeData': amplitudeData
         });
         resolve();
       }

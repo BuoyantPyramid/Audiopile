@@ -108,6 +108,10 @@ var Song = db.define('song', {
   imageUrl: {
     type: Sequelize.STRING,
     defaultValue: 'http://lorempixel.com/200/200/' // Update
+  },
+  amplitudeData: {
+    type: Sequelize.JSON,
+    allowNull: true
   }
 });
 
