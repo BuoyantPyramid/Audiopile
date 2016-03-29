@@ -7,6 +7,8 @@ var request = require('request');
 var ffmpeg = require('fluent-ffmpeg');
 var serverConfig = require('../config/server.config.js');
 var awsConfig = require('../config/aws.config.js');
+var exec = require('child_process').exec;
+
 
 var AWS = require('aws-sdk');
 AWS.config.update({
@@ -70,7 +72,7 @@ var addToQueue = function(req, res, next) {
         console.log('--- 6 --- File download success ', s3UniqueHash);
         // next();
         // add file to transcoding
-        compress(downloadDestination, s3UniqueHash, songID);
+        convertToWav(downloadDestination, s3UniqueHash, songID);
       }
     });
     cb();
@@ -134,12 +136,68 @@ var deleteFile = function(filePath) {
   });
 };
 
-var compress = function(hiResFilePath, s3UniqueHash, songID) {
+var convertToWav = function(hiResFilePath, s3UniqueHash, songID) {
+  console.log('--- 6.5 --- Prepare to convert to wav');
+
+  // var lowResFilePath = path.join(__dirname + '/../temp_audio/low_res_outbox/' + lowResFileName);
+  var fileName = s3UniqueHash.split('.')[0];
+  var tempWavFilename = fileName + '.wav';
+  var tempWavPath = path.join(__dirname + '/../temp_audio/wav_temp/' + tempWavFilename);
+
+  // if file is already wav, forward to waveform generator
+  // pass on to compression
+
+  // if file is not wav, convert to wav using ffmpeg
+  //
+  var anythingToWav = ffmpeg(hiResFilePath)
+    .setFfmpegPath('/usr/local/bin/ffmpeg')
+    // .audioCodec('libmp3lame')
+    // .audioBitrate(256)
+    // .audioQuality(0)
+    // .audioChannels(2)
+    .on('progress', function(progress) {
+      console.log('--- 6.6 --- Processing: ' + progress.percent + '% done');
+    })
+    .on('error', function(err, stdout, stderr) {
+      console.log('--- 6.6 --- Cannot process temp wav: ' + err.message);
+    })
+    .on('end', function() {
+      console.log('--- 6.6 --- Finished temp wav');
+      deleteFile(hiResFilePath);
+      generateWaveformArray(tempWavPath, s3UniqueHash, songID);
+
+      // uploadLowRes( lowResFilePath, tempWavFilename, songID );
+    })
+    .save( tempWavPath );
+
+  // on end compress(downloadDestination, s3UniqueHash, songID)
+};
+
+var generateWaveformArray = function(wavTempPath, s3UniqueHash, songID) {
+  console.log('--- 6.8 --- Generate waveformArray from temp wav');
+
+  var cmd = 'wav2json ' + wavTempPath + ' -s 200 -p 3 --channels=max -n';
+  var wavJsonDataPath = wavTempPath + '.json';
+
+  exec(cmd, function(error, stdout, stderr) {
+    // command output is in stdout
+    console.log('--- 6.9 ---', error, stdout, stderr);
+    if (error) {
+      console.log('--- 6.9 ---', error);
+      return;
+    }
+    compress(wavTempPath, s3UniqueHash, songID, wavJsonDataPath);
+  });
+};
+
+var compress = function(hiResFilePath, s3UniqueHash, songID, wavJsonDataPath) {
   console.log('--- 7 --- Get ready to read and compress the file!');
 
   var fileName = s3UniqueHash.split('.')[0];
   var lowResFileName = fileName + '.mp3';
   var lowResFilePath = path.join(__dirname + '/../temp_audio/low_res_outbox/' + lowResFileName);
+
+
 
   var ffmpegCommand = ffmpeg(hiResFilePath)
     .setFfmpegPath('/usr/local/bin/ffmpeg')
@@ -179,20 +237,38 @@ var compress = function(hiResFilePath, s3UniqueHash, songID) {
     .on('progress', function(progress) {
       console.log('--- 8 --- Processing: ' + progress.percent + '% done');
     })
+    .on('error', function(err, stdout, stderr) {
+      console.log('--- 8 --- Cannot process audio: ' + err.message);
+    })
     .on('end', function() {
       console.log('--- 8 --- Finished processing');
       deleteFile(hiResFilePath);
-      uploadLowRes( lowResFilePath, lowResFileName, songID );
-    })
-    .on('error', function(err, stdout, stderr) {
-      console.log('--- 8 --- Cannot process audio: ' + err.message);
+      uploadLowRes( lowResFilePath, lowResFileName, songID, wavJsonDataPath);
     })
     .save( lowResFilePath );
 };
 
-var uploadLowRes = function(filePath, fileName, songID) {
-  console.log('--- 9 --- Upload LowRes to S3');
-  console.log('--- 9 --- Upload LowRes to S3');
+var uploadLowRes = function(filePath, fileName, songID, wavJsonDataPath) {
+  console.log('--- 9 --- Upload LowRes to S3', wavJsonDataPath);
+
+  var amplitudeData = fs.readFileSync(wavJsonDataPath, 'utf8');
+
+  // mapping the values in waveform array server side
+  // Erick is also doing this client side right now
+  
+  // amplitudeData = JSON.parse(amplitudeData);
+  
+  // var intAmplitudeArray = amplitudeData.max.map(function(element) {
+  //   console.log('Element:', element);
+  //   element = Math.floor( element * 100 );
+  //   return element
+  // });
+
+  // amplitudeData.max = intAmplitudeArray;
+
+  console.log('--- --- ', amplitudeData);
+
+  console.log('--- 9 --- Upload LowRes to S3', amplitudeData);
 
   var putParams = {
     Key: 'audio/' + fileName,
@@ -209,14 +285,15 @@ var uploadLowRes = function(filePath, fileName, songID) {
       console.log("--- 10.5 --- Successfully uploaded data to ", awsConfig.bucket);
       console.log('--- 10.6 --- Delete this mp3: ', filePath);
       deleteFile(filePath);
+      deleteFile(wavJsonDataPath);
       // send fileName to db on primary server
-      saveCompressedFileReference(fileName, songID);
+      saveCompressedFileReference(fileName, songID, amplitudeData);
     }
   });
 }
 
-var saveCompressedFileReference = function(fileName, songID) {
-  console.log('--- 11 --- Send request to primary server to save compressed Ref into DB');
+var saveCompressedFileReference = function(fileName, songID, amplitudeData) {
+  console.log('--- 11 --- Send request to primary server to save compressed Ref into DB', amplitudeData);
 
   // var dateRecorded = 23432342343;
   // var dateUploaded = 23432343234;
@@ -233,12 +310,14 @@ var saveCompressedFileReference = function(fileName, songID) {
   console.log('--- 11.4 --- SongID: ', songID);
   console.log('--- 11.5 --- compressedID: ', fileName);
 
+  console.log('--- 11.5 --- primaryServerRoute: ', primaryServerRoute, songID, fileName);
   request.post(
     primaryServerRoute,
     {
       json:{
         songID: songID,
-        compressedID: fileName
+        compressedID: fileName,
+        amplitudeData: amplitudeData
       }
     },
     function(err, res, body) {

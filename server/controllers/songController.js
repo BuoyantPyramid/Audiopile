@@ -17,8 +17,9 @@ var addCompressedLink = function (req, res, next) {
   console.log('--- Add Compressed Link ---', req.body);
   var songID = req.body.songID;
   var compressedID = req.body.compressedID;
+  var amplitudeData = req.body.amplitudeData;
 
-  SongModel.addCompressedLink(songID, compressedID)
+  SongModel.addCompressedLink(songID, compressedID, amplitudeData)
   .then(function(data) {
     console.log('Did it!');
     res.sendStatus(200);
