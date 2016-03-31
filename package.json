@@ -34,7 +34,7 @@
     "crypto-js": "^3.1.6",
     "express": "^4.13.4",
     "gulp-size": "^2.1.0",
-    "jsonwebtoken": "^5.7.0",
+    "jwt-simple": "^0.4.1",
     "mailgun-js": "^0.7.7",
     "method-override": "^2.3.5",
     "morgan": "^1.7.0",

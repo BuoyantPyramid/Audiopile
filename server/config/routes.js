@@ -16,8 +16,12 @@ var routing = function (app, express) {
 
   var apiRoutes = express.Router(); 
 
+  // apiRoutes.get('/songs/:filename', Song.getSongByFilename);
+
   apiRoutes.post('/users/signup', User.signup);
   apiRoutes.post('/users/login', User.login);
+  // apiRoutes.get('/users/:id/avatar', User.getAvatar);
+  // apiRoutes.get('/groups/:id/banner/', Group.getBanner);
   
   // secret unprotected routes from compression server
   // TODO: make this secret an actual secret

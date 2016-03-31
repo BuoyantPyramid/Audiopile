@@ -1,4 +1,4 @@
-var jwt = require('jsonwebtoken');
+var jwt = require('jwt-simple');
 var config = require('../config/config');
 var path = require('path');
 var User = require('../models/userModel');
@@ -64,7 +64,7 @@ var login = function (req, res, next) {
       return user.comparePassword(password)
         .then(function (didMatch) {
           if (didMatch) {
-            var token = jwt.sign(user.toJSON(), JWT_SECRET, { expiresInMinutes: 60 * 24 });
+            var token = jwt.encode(user, JWT_SECRET);
             User.compileUserData(user)
             .then(function(compiledUser) {
               res.json({

@@ -4,7 +4,7 @@
   
   <div class="play-button-container">
     <button class="icon-button song-loading" ng-hide="!!song.compressedAddress" disabled><i class="fa fa-refresh fa-spin fa-lg"></i></button>
-    <button class="change-song icon-button" ng-show="!!song.compressedAddress" ng-click="$parent.updateIndex(index);"><i ng-class="isPlaying ? 'fa-pause-circle-o' : 'fa-play-circle-o' " class="fa fa-2x"></i></button>
+    <button class="change-song icon-button" ng-show="!!song.compressedAddress" ng-click="$parent.updateIndex(index); reset();"><i ng-class="isPlaying ? 'fa-pause-circle-o' : 'fa-play-circle-o' " class="fa fa-2x"></i></button>
   </div>
 
   <div class="song-title-container">
