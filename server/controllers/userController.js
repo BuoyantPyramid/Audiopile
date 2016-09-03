@@ -57,32 +57,74 @@ var login = function (req, res, next) {
   var password = req.body.password;
 
   User.getUser({email: email})
-  .then(function (user) {
-    this.user = user;
-    if (!user) {
-      res.status(404).json('User does not exist');
+  .then(function(user) {
+    if (user === null) {
+      // user does not exist
+      throw new Error('User does not exist!');
+      return null;
     } else {
-      return user.comparePassword(password);
+      // save user for use later in promise chain
+      this.user = user;
+      // check that submitted email is the email returned in db
+      if (user.dataValues.email === email) {
+        // email returned from db is the exact same as email submitted
+        return user.comparePassword(password);
+      }
     }
   })
-  .then(function (didMatch) {
+  .then(function(didMatch) {
+    // console.log('Password compare response', didMatch);
     if (didMatch) {
+      // password is legit
       return User.compileUserData(this.user);
     } else {
-      res.status(401).json('Incorrect password');
+      // password is not legit
+      throw new Error('Password is not valid!');
+      return null;
     }
   })
-  .then(function(compiledUser) {
+  .then(function(userData) {
+    // console.log('User data=======================!', userData);
     var token = jwt.sign(this.user.toJSON(), JWT_SECRET, { expiresIn: 60 * 60 * 24 });
     res.json({
       token: token,
-      user: compiledUser
+      user: userData
     });
   })
-  .catch(function (error) {
-    next(error);
+  .catch(function(err) {
+    res.status(401).json(err.message);
   })
   .bind({});
+
+
+  // .then(function (user) {
+  //   this.user = user;
+  //   if (!user) {
+  //     res.status(404).json('User does not exist');
+  //     throw new Error('User does not exist')
+  //   } else {
+  //     return user.comparePassword(password);
+  //   }
+  // })
+  // .then(function (didMatch) {
+  //   if (didMatch) {
+  //     return User.compileUserData(this.user);
+  //   } else {
+  //     res.status(401).json('Incorrect password');
+  //     throw new Error('User does not exist');
+  //   }
+  // })
+  // .then(function(compiledUser) {
+  //   var token = jwt.sign(this.user.toJSON(), JWT_SECRET, { expiresIn: 60 * 60 * 24 });
+  //   res.json({
+  //     token: token,
+  //     user: compiledUser
+  //   });
+  // })
+  // .catch(function (error) {
+  //   next(error);
+  // })
+  // .bind({});
 };
 
 var setAvatar = function(req, res, next) {

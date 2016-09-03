@@ -15,6 +15,7 @@ var compileUserData = function(user) {
   return Group.findById(user.currentGroupId, {include: [{model: Song}]})
   .then(function(currentGroup) {
     // Get rid of the password;
+    currentGroup = currentGroup.toJSON();
     user = sanitizeUser(user);
     user.currentGroup = currentGroup;
     return user;
