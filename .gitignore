@@ -59,4 +59,7 @@ test/compression_server/testFiles/*
 # ignore db backup folder
 backup/postgres-backup/*
 
+# ignore test output
+test-results.xml
+
 

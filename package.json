@@ -6,9 +6,7 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "open:dev": "opener http://localhost:3000",
-    "test": "NODE_ENV=test JAMRUN=test mocha  --recursive test",
-    "test_webserver": "NODE_ENV=test JAMRUN=test mocha  --recursive  test/server/",
-    "testserver2": " mocha test/compression_server/compressionTest.js",
+    "test": "NODE_ENV=test JAMRUN=test mocha test --recursive",
     "setup": "node sessionSetup.js",
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "start": "gulp",
@@ -50,7 +48,6 @@
     "request": "2.69.0",
     "rimraf": "2.5.2",
     "sequelize": "3.19.3",
-    "sinon": "1.17.3",
     "socket.io": "1.4.5",
     "supertest": "1.2.0"
   },
@@ -70,6 +67,7 @@
     "gulp-sass": "2.2.0",
     "gulp-uglify": "1.5.3",
     "mocha": "2.4.5",
+    "mocha-junit-reporter": "1.12.0",
     "sinon": "1.17.3"
   }
 }
